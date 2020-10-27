@@ -1,0 +1,64 @@
+﻿@page "/counter"
+
+<h1>Game of Live</h1>
+
+<p>Current count: @currentCount and current radio @theRadio</p>
+<hr>
+<table class="environment">
+@for(var i=0; i<@e.total_of_rows(); i++){
+    <tr>
+    @for(var j=0; j<@e.total_of_cols(); j++){
+        @if(e.biounit(i,j)!=null){
+        <td class="cell" style="background-color:@e.biounit(i,j).myColor()"></td>
+        }
+        else{
+        <td class="cell dead"></td>
+        }
+    }
+    </tr>
+}
+</table>
+<hr>
+<p>
+    <input type="radio" name="myradiobtn"
+           checked="@(theRadio.Equals("step"))"
+           value="step"
+           @onchange="ClickRadio"/> Step by step
+    <input type="radio" name="myradiobtn"
+           checked="@(theRadio.Equals("many"))"
+           value="many"
+           @onchange="ClickRadio"/> Several steps 
+</p>     
+
+<div style="display:@(theRadio.Equals("many")?"":"none")">
+  <h5>Cycles Specification </h5>
+  Number of cycles:
+  <select>
+  <option><input @bind="cyclesPerTime"/> (internal value:@cyclesPerTime) </option>
+  </select>
+  <hr> 
+</div>
+
+<button class = "btn btn-primary" @onclick="IncrementCount">Next</button>
+<a  
+    class="btn btn-primary"
+    href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life"
+    target="_blank">
+    Look for Patterns in Wikipedia
+</a>
+@code {
+    private int cyclesPerTime = 0;
+    private string theRadio ="";
+    private int currentCount = 0;
+    private Data.Environment e = new Data.Environment(30,30);
+    private Data.BioUnit u;
+    private void IncrementCount()
+    {
+        currentCount++;
+        e.next_Rabbit_Carrot_Step();
+    }
+    private void ClickRadio(ChangeEventArgs args){
+        theRadio = args.Value.ToString();
+        currentCount++;
+    }
+}
