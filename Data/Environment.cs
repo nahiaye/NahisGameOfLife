@@ -2,8 +2,10 @@
     using System.Collections.Generic;
     using System.ComponentModel;
 
-    namespace blazorserver01.Data{
-        public class Environment{
+    namespace blazorserver01.Data
+{
+        public class Environment
+    {
         private int rows = 1;
         private int cols = 1;
         private BioUnit[,] cell;
@@ -46,8 +48,8 @@
                 if(this.rightPos(i+1,j) && this.cell[i+1,j]!=null) ans.Add(this.cell[i+1,j]);
                 if(this.rightPos(i+1,j+1) && this.cell[i+1,j+1]!=null) ans.Add(this.cell[i+1,j+1]);                
             }
-        return ans;
-        }
+        return ans; }
+        
         public int surroundingNeighbors(int i,int j,String specie){
             int ans=0;
             List<BioUnit> surr = this.neighbors(i,j);
@@ -99,10 +101,61 @@
            }
         }
         }
-    for(var i=0; i<this.rows; i++)
-    for(var j=0; j<this.cols; j++){
+        
+        for(var i=0; i<this.rows; i++)
+        for(var j=0; j<this.cols; j++){
         this.cell[i,j] = aux[i,j];
        }
-    } 
+    }  
+     public void next_Conway_Step(){
+        int n;
+        bool[,] aux = new bool[this.rows,this.cols];
+        for(var i=0; i<this.rows; i++)
+        for(var j=0; j<this.cols; j++){
+            n = this.surroundingNeighbors(i,j, "BioUnit");
+            if(n==3)
+                aux[i,j] = true;
+            else if (n==2 && this.cell[i,j]!=null)
+                aux[i,j] = true;
+            else 
+                aux[i,j] = false;
+        }
+        for(var i=0; i<this.rows; i++)
+        for(var j=0; j<this.cols; j++){
+            if(aux[i,j] && this.cell[i,j] == null){
+                this.cell[i,j] = new BioUnit(i,j,this);
+            }
+            else if(!aux[i,j] && this.cell[i,j] != null){
+                this.cell[i,j] = null;
+            }
+        }
+    }
+    public void put_pattern(int x,int y,string pattern){
+        if(pattern.Equals("pentadecathlon"))
+        {
+            for(var i=0; i<8; i++)
+            for(var j=0; j<3; j++)
+            if(!((i==1 && j==1) || (i==6 && j==1)) ){
+                this.insert(x+i,y+j, new BioUnit(x+i,y+j,this));
+            }
+        }
+        else if(pattern.Equals("toad")){
+            for(var i=0; i<4; i++)
+            for(var j=0; j<2; j++)
+            if(!((i==0 && j==1) && (i==3 && j==0)) ){
+                this.insert(x+i,y+j, new BioUnit(x+i,y+j,this));
+            }
+        }else if(pattern.Equals("pulsar")){
+            for(var i=0; i<3; i++)
+            for(var j=0; j<3; j++)
+            if(!((i==1 && j==1) || (i==1 && j==1) || (i==2 && j==0))){
+                this.insert(x+i,y+j, new BioUnit(x+i,y+j,this));
+            }
+        }
+    }
   }
 }
+
+  
+
+  
