@@ -107,7 +107,7 @@
         this.cell[i,j] = aux[i,j];
        }
     }  
-     public void next_Conway_Step(){
+     public void nextConwayStep(){
         int n;
         bool[,] aux = new bool[this.rows,this.cols];
         for(var i=0; i<this.rows; i++)
@@ -134,22 +134,26 @@
         if(pattern.Equals("pentadecathlon"))
         {
             for(var i=0; i<8; i++)
-            for(var j=0; j<3; j++)
-            if(!((i==1 && j==1) || (i==6 && j==1)) ){
+            {
+                for(var j=0; j<3; j++)
+                if(!((i==1 && j==1) || (i==6 && j==1)) ){
                 this.insert(x+i,y+j, new BioUnit(x+i,y+j,this));
+            }
             }
         }
         else if(pattern.Equals("toad")){
             for(var i=0; i<4; i++)
-            for(var j=0; j<2; j++)
-            if(!((i==0 && j==1) && (i==3 && j==0)) ){
+            {   for(var j=0; j<2; j++) 
+                if(!((i==0 && j==1) && (i==3 && j==0)) ){
                 this.insert(x+i,y+j, new BioUnit(x+i,y+j,this));
             }
-        }else if(pattern.Equals("pulsar")){
+            }
+        }else if(pattern.Equals("ship")){
             for(var i=0; i<3; i++)
-            for(var j=0; j<3; j++)
-            if(!((i==1 && j==1) || (i==1 && j==1) || (i==2 && j==0))){
+            {   for(var j=0; j<3; j++)  
+                if(!((i==1 && j==1) || (i==1 && j==1) || (i==2 && j==0))){
                 this.insert(x+i,y+j, new BioUnit(x+i,y+j,this));
+            }
             }
         }
     }

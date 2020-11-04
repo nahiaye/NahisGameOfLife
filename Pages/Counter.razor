@@ -1,130 +1,143 @@
 ﻿@page "/counter"
 
-<h1>Game of Life</h1>
+<h1>Game of Live</h1>
+
 <hr>
-@{
-    if(currentCount==0){
-        e.put_pattern(6,6,"pentadecathlon");
-    }    
-}
+
+@* table *@
 <table class="environment">
-@for(var i=0; i<@e.total_of_rows(); i++){
-    <tr>
-    @for(var j=0; j<@e.total_of_cols(); j++){
-        @if(e.biounit(i,j)!=null){
-        <td class="cell" style="background-color:@e.biounit(i,j).myColor()"></td>
-        }
-        else{
-        <td class="cell dead"></td>
-        }
+    @for(var i=0; i<@e.total_of_rows(); i++)
+    {
+         <tr>
+             @for(var j=0; j<@e.total_of_cols(); j++){
+            @if(e.biounit(i,j)!=null)
+             { 
+            <td class="cell" style = "background-color:@e.biounit(i,j).myColor()"></td> 
+            } 
+            else 
+             { 
+           <td class="cell dead"></td> 
+           } 
+         }
+            </tr>
     }
-    </tr>
-}
 </table>
-<hr>
+
+@* radio button *@
 <p>
-    <input type="radio" name="myradiobtn"
-           checked="@(theRadio.Equals("step"))"
-           value="step"
-           @onchange="ClickRadio"/> Step by step
-    <input type="radio" name="myradiobtn"
-           checked="@(theRadio.Equals("many"))"
-           value="many"
-           @onchange="ClickRadio"/> Several steps 
-</p>     
+    <input type="radio" name="myradiobtn" checked="@(theRadio.Equals("step"))" value="step" @onchange="ClickRadio"/>
+    Step by step
+    <input type="radio" name="myradiobtn" checked="@(theRadio.Equals("many"))" value="many" @onchange="ClickRadio"/>
+    Several steps
+</p>
 
+@* hidden option from the radio click *@
 <div style="display:@(theRadio.Equals("many")?"":"none")">
-  <h5>Cycles Specification </h5>
-  Number of cycles:
-  <select>
-  <option><input @bind="cyclesPerTime"/> (internal value:@cyclesPerTime) </option>
-  </select>
-  <hr> 
-</div> 
+<h5>Cycle Specification</h5>
+Number of cycles;
 
-<div style="display: flex;">
-@* Adding first button *@
-<button style = "display:@(Message.Equals("Pattern pentadecathlon")?"none":"")" 
-class = "btn btn-primary" @onclick=@(() => Message = "Pattern pentadecathlon")>Add Pattern...</button> 
-<hr>
-@* Adding second button *@
-<button style="display:@(Message.Equals("Pattern pentadecathlon")?"":"none") ;" 
-class = "btn btn-primary" @onclick=@(() => Message = "Add the Pattern")>Add (-)</button> 
+<select @bind = "option">
+<option value= "1">1st</option>
+<option value = "2">2nd</option>
+<option value = "3">3rd</option>
+<option value = "4">4th</option>
+<option value = "5">5th</option>
+</select>
 <br>
-<form action="" style = "display:@(Message.Equals("Pattern pentadecathlon")?"":"none")">
-@* Displaying text after click *@
-@Message
-@* <input type="submit" value="@Message"> *@
-
-<label for="">row</label>
-<input type="text" @bind = "row"/>
-
-<label for="">col</label>
-<input type="text" @bind = "col"/>
-
-<button 
-class = "btn btn-primary">Add</button>
-</form>
-
+Add option @option
 </div>
+
+@* next button *@
+        <button class = "btn btn-primary" @onclick="IncrementCount">Next</button>
+
 <a  
     class="btn btn-primary"
-    href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life"
-    target="_blank">
-    Look for Patterns in Wikipedia </a>
+     href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" target="_blank">
+    Look for Patterns in Wikipedia
+</a>
 
-<button class="btn btn-primary" @onclick="AddPatternRow">@addPatternText</button>
- 
-    <div class="my-3" style="display:@(addPatternHidden == true ? "none" : "block")">
-    
-            <label>row <input class="form-control" type="number" @bind="row"> </label>
-            <label>col <input class="form-control" type="number" @bind="col"></label>
-            <label>Pattern <select class="form-control" @bind="patternType">
-                <option value="Pentadecathlon">Pentadecathlon</option>
-                <option value="Toad">Toad</option>
-                <option value="Pulsar">Pulsar</option>
-            </select> 
+        <button class = "btn btn-primary" @onclick="AddPatternRow">@addPatternText</button> 
+
+<div class="my-3" style = "display:@(addPatternHidden == true ? "none" : "block")" >
+            <label> row <input class="form-control" type="number" @bind="row"> </label>
+            <label> col <input class="form-control" type="number" @bind="col"> </label>
+            <label>Pattern 
+                <select class="form-control" @bind = "patternType">
+                    <option value="pentadecathlon">Pentadecathlon</option>
+                    <option value="toad">Toad</option>
+                    <option value="ship">Ship</option>
+                </select>
+            </label>
+        <button class = "btn btn-primary" @onclick = "AddPattern"> Add @patternType Pattern</button>
+    <button class="btn btn-primary" @onclick="AddCells">@addCellsText</button>
+    <div class="my-3" style="display:@(addCellsHidden == true ? "none" : "block")">
+        <label>Enter Cells(x,y) <textarea class="form-control" @bind="textAreaCells"></textarea>
+            <button class="btn btn-primary mt-2" @onclick="AddCell">Add cell</button>
         </label>
-            <button class="btn btn-primary"@onclick="AddPattern">Add @patternType Pattern</button>
-        </div>
- 
-@code {
-    private bool addPatternHidden = true;
-    private string addPatternText = "Add pattern...";
-    private string patternType = "pentadecathlon";
-    private string Message {get; set; } = "";
-    private int col{get; set; } = 0; 
-    private int row{get; set; } =0;
-    private bool AddButton;
-    private int cyclesPerTime = 0;
-    private string theRadio ="";
-    private int currentCount = 0;
-    private Data.Environment e = new Data.Environment(30,30);
-    private Data.BioUnit u;
+    </div>
+</div>
 
-    protected override void OnInitialized(){
-        Message = col.ToString() ?? "true";
-    }
+<hr>
+
+@code{
+    //Defining a valuable for Pattern button
+    private bool addPatternHidden = true;
+    private bool addCellsHidden =true;
+    private string addCellsText = "Add Cells...";   
+    private string patternType = "";
+    // private string toadType = "toad"; 
+    private string addPatternText ="Add Pattern...";
+    private string textAreaCells = ""; 
+    private int col { get; set; }=0;
+    
+    private  int row { get; set; } =0;
+   
+    private String theRadio="";
+
+    private int currentCount = 0;
+
+    private Data.Environment e = new Data.Environment(30,30);
+       
+    private string option = "";
+
+    
     private void IncrementCount()
     {
-        currentCount++;
-        e.next_Conway_Step();
+        currentCount++; 
+        e.nextConwayStep();
     }
+
     private void ClickRadio(ChangeEventArgs args){
         theRadio = args.Value.ToString();
         currentCount++;
     }
 
-    private void AddPatternRow()
-    {
-        addPatternText = "Add pattern " + (addPatternHidden ? "(-)" : "...");
- 
-        addPatternHidden = !addPatternHidden;
-    }
-    private void AddPattern()
-    {
-        e.put_pattern(row, col, "pentadecathlon");
+    private void AddPattern(){
+        e.put_pattern(row, col, patternType);
         row = col = 0;
     }
-    
+    private void AddPatternRow(){
+        addPatternText = "Add Pattern " + (addPatternHidden ? "(-)" : "...");
+        addPatternHidden = !addPatternHidden;
+    }
+    private void AddCells()
+      {
+          addCellsText = "Add cells " + (addCellsHidden ? "(-)" : "...");
+   
+          addCellsHidden = !addCellsHidden;
+      }
+   
+      private void AddCell()
+      {
+          string[] cells = textAreaCells.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+   
+          foreach (string cell in cells)
+          {
+              var dividedCells = cell.Split(',');
+              e.insert(int.Parse(dividedCells[0]), int.Parse(dividedCells[1]), new blazorserver01.Data.BioUnit(int.Parse(dividedCells[0]),int.Parse(dividedCells[1]),e));
+          }
+   
+          textAreaCells = "";
+      } 
+
 }
